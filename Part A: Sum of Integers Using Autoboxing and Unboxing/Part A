@@ -1,0 +1,22 @@
+import java.util.*;
+
+public class AutoboxingSum {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter numbers separated by space: ");
+        String input = sc.nextLine();
+
+        String[] nums = input.split(" ");
+        int sum = 0;
+
+        for (String str : nums) {
+            // Parsing string to int
+            Integer num = Integer.parseInt(str); // Autoboxing
+            sum += num; // Unboxing
+        }
+
+        System.out.println("Sum of all integers: " + sum);
+        sc.close();
+    }
+}
