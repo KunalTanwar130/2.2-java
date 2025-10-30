@@ -1,0 +1,107 @@
+import java.io.*;
+import java.util.*;
+
+class Employee implements Serializable {
+    private static final long serialVersionUID = 1L;
+    int id;
+    String name;
+    double salary;
+
+    public Employee(int id, String name, double salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    public void display() {
+        System.out.println("ID: " + id + ", Name: " + name + ", Salary: " + salary);
+    }
+}
+
+public class EmployeeManagementSystem {
+    static final String FILE_NAME = "employees.dat";
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\n===== Employee Management System =====");
+            System.out.println("1. Add Employee");
+            System.out.println("2. Display Employees");
+            System.out.println("3. Exit");
+            System.out.print("Enter choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    addEmployee(sc);
+                    break;
+                case 2:
+                    displayEmployees();
+                    break;
+                case 3:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        } while (choice != 3);
+
+        sc.close();
+    }
+
+    static void addEmployee(Scanner sc) {
+        try {
+            System.out.print("Enter ID: ");
+            int id = sc.nextInt();
+            sc.nextLine(); // consume newline
+
+            System.out.print("Enter Name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter Salary: ");
+            double salary = sc.nextDouble();
+
+            Employee emp = new Employee(id, name, salary);
+
+            // Append mode
+            ArrayList<Employee> empList = readAllEmployees();
+            empList.add(emp);
+
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
+            oos.writeObject(empList);
+            oos.close();
+
+            System.out.println("✅ Employee added successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void displayEmployees() {
+        ArrayList<Employee> empList = readAllEmployees();
+        if (empList.isEmpty()) {
+            System.out.println("No employees found!");
+        } else {
+            System.out.println("\n--- Employee Records ---");
+            for (Employee emp : empList)
+                emp.display();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    static ArrayList<Employee> readAllEmployees() {
+        ArrayList<Employee> empList = new ArrayList<>();
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME));
+            empList = (ArrayList<Employee>) ois.readObject();
+            ois.close();
+        } catch (FileNotFoundException e) {
+            // Ignore if file not found (first run)
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return empList;
+    }
+}
